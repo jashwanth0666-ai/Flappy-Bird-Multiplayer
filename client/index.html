@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flappy Bird Multiplayer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="light">
+  <main class="game-shell">
+    <section class="game-frame" aria-label="Flappy Bird game">
+      <div class="frame-actions">
+        <button id="themeToggleButton" type="button" class="icon-button">Dark Mode</button>
+        <button id="muteToggleButton" type="button" class="icon-button">Mute</button>
+      </div>
+
+      <canvas
+        id="gameCanvas"
+        width="420"
+        height="640"
+        aria-label="Flappy Bird game canvas"
+      ></canvas>
+
+      <div class="hud">
+        <p class="score-label">Score</p>
+        <p id="scoreValue" class="score-value">0</p>
+      </div>
+
+      <div class="hud hud-player">
+        <p class="score-label">Pilot</p>
+        <p id="playerNameValue" class="score-value score-value-player">Player</p>
+      </div>
+
+      <div class="hud hud-status">
+        <p class="score-label">Network</p>
+        <p id="connectionValue" class="score-value score-value-player">Offline</p>
+      </div>
+
+      <div class="hud hud-room">
+        <p class="score-label">Room</p>
+        <p id="roomValue" class="score-value score-value-player">None</p>
+      </div>
+
+      <div class="hud hud-scoreboard">
+        <p class="score-label">Scoreboard</p>
+        <div id="scoreboardList" class="scoreboard-list">
+          <p class="scoreboard-empty">Waiting for pilots...</p>
+        </div>
+      </div>
+
+      <div id="overlay" class="overlay">
+        <div class="panel">
+          <div id="startScreen" class="overlay-screen">
+            <p class="panel-tag">Shared Sky Run</p>
+            <h1 id="overlayTitle" class="hero-title">Flappy Bird Multiplayer</h1>
+            <p id="overlayMessage" class="hero-copy">
+              Enter your pilot name, then start the round.
+            </p>
+            <label class="input-group" for="playerNameInput">
+              <span class="input-label">Player Name</span>
+              <input
+                id="playerNameInput"
+                name="playerName"
+                type="text"
+                maxlength="20"
+                placeholder="Player"
+                autocomplete="off"
+              >
+            </label>
+            <div class="room-actions room-actions-split">
+              <button id="createRoomButton" type="button" class="secondary-button">Create Room</button>
+              <div class="join-room-group">
+                <input
+                  id="joinRoomInput"
+                  name="joinRoom"
+                  type="text"
+                  maxlength="6"
+                  placeholder="ROOMID"
+                  autocomplete="off"
+                >
+                <button id="joinRoomButton" type="button" class="secondary-button">Join Room</button>
+              </div>
+            </div>
+            <p id="roomMessage" class="room-message">Create a room or join an existing one to begin.</p>
+            <button id="startButton" type="button">Start Game</button>
+          </div>
+
+          <div id="gameOverScreen" class="overlay-screen hidden">
+            <p class="panel-tag">Round Finished</p>
+            <h2 id="gameOverTitle">Game Over</h2>
+            <p id="gameOverPlayer" class="result-line">Player: Player</p>
+            <p id="gameOverScore" class="result-line">Score: 0</p>
+            <button id="restartButton" type="button">Play Again</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
