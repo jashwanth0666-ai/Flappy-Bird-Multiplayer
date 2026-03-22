@@ -25,25 +25,20 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: "*",
+    methods: ["GET", "POST"],
   },
 });
 
-// Room worlds are isolated so the next phase can swap this object for
-// a room service without changing the socket contract.
 const rooms = {};
+const clientPath = path.join(__dirname, "../client");
 
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(clientPath));
 
-app.get("/health", (_request, response) => {
-  const roomIds = Object.keys(rooms);
-  const playerCount = roomIds.reduce((count, roomId) => count + Object.keys(rooms[roomId].players).length, 0);
-
-  response.json({
-    ok: true,
-    roomCount: roomIds.length,
-    playerCount,
-  });
+app.get("/", (_request, response) => {
+  response.sendFile(path.join(clientPath, "index.html"));
 });
+
+app.get("/health", (_request, response) => response.send("OK"));
 
 function createPlayer(socket) {
   return {
@@ -264,13 +259,8 @@ function createRoomForSocket(socket, player) {
   return joinRoom(socket, player, roomId);
 }
 
-function logPlayerEvent(type, socketId, detail) {
-  console.log(`[socket] ${type}: ${socketId} | ${detail}`);
-}
-
 io.on("connection", (socket) => {
   const player = createPlayer(socket);
-  logPlayerEvent("connected", socket.id, "awaiting room assignment");
 
   socket.on("createRoom", (callback) => {
     const result = createRoomForSocket(socket, player);
@@ -281,7 +271,6 @@ io.on("connection", (socket) => {
     if (result.ok) {
       emitFullRoomState(socket, result.roomId);
       emitRoomPlayers(result.roomId);
-      logPlayerEvent("room-created", socket.id, `room ${result.roomId}`);
     }
   });
 
@@ -296,7 +285,6 @@ io.on("connection", (socket) => {
     if (result.ok) {
       emitFullRoomState(socket, result.roomId);
       emitRoomPlayers(result.roomId);
-      logPlayerEvent("room-joined", socket.id, `room ${result.roomId}`);
     }
   });
 
@@ -317,9 +305,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    const roomId = player.roomId;
     leaveCurrentRoom(socket, { player });
-    logPlayerEvent("disconnected", socket.id, roomId ? `left room ${roomId}` : "no room");
   });
 });
 
@@ -334,6 +320,6 @@ setInterval(() => {
   });
 }, TICK_RATE_MS);
 
-server.listen(PORT, () => {
-  console.log(`[server] listening on http://localhost:${PORT}`);
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server listening on 0.0.0.0:${PORT}`);
 });

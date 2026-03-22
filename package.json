@@ -1,11 +1,11 @@
 {
   "name": "game",
   "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
+  "description": "Multiplayer Flappy Bird ready for Render deployment",
+  "main": "server/server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "node server/server.js",
+    "dev": "node server/server.js"
   },
   "keywords": [],
   "author": "",

@@ -521,9 +521,8 @@ class RemotePlayerStore {
 }
 
 class NetworkClient {
-  constructor(game, serverUrl) {
+  constructor(game) {
     this.game = game;
-    this.serverUrl = serverUrl;
     this.socket = null;
     this.localSocketId = "";
     this.lastSentAt = 0;
@@ -534,27 +533,26 @@ class NetworkClient {
       return;
     }
 
-    this.socket = io(this.serverUrl, {
-      transports: ["websocket", "polling"],
-    });
+    const socket = io();
+    this.socket = socket;
 
-    this.socket.on("connect", () => {
-      this.localSocketId = this.socket.id;
+    socket.on("connect", () => {
+      this.localSocketId = socket.id;
       this.game.setConnectionStatus("Online");
       this.game.setRoomMessage("Connected. Create or join a room.", false);
     });
 
-    this.socket.on("disconnect", () => {
+    socket.on("disconnect", () => {
       this.localSocketId = "";
       this.game.setConnectionStatus("Offline");
       this.game.handleRoomLeft("Disconnected from server.");
     });
 
-    this.socket.on("roomPlayersUpdate", (payload) => {
+    socket.on("roomPlayersUpdate", (payload) => {
       this.handleRoomPlayersUpdate(payload);
     });
 
-    this.socket.on("roomPipesUpdate", (payload) => {
+    socket.on("roomPipesUpdate", (payload) => {
       this.handleRoomPipesUpdate(payload);
     });
   }
@@ -644,7 +642,7 @@ class FlappyGame {
     this.remotePlayers = new RemotePlayerStore(this.config);
     this.particles = new ParticleSystem();
     this.sound = new SoundManager(ui);
-    this.network = new NetworkClient(this, "http://localhost:3000");
+    this.network = new NetworkClient(this);
     this.mode = "menu";
     this.score = 0;
     this.scoreboardPlayers = {};
