@@ -133,12 +133,6 @@ Deployed using **Render**
 
 ---
 
-## 💼 Resume Highlight
-
-> Built a real-time multiplayer game using Socket.IO with room-based architecture, server-authoritative game logic, and synchronized gameplay across multiple clients.
-
----
-
 ## 🤝 Contributing
 
 Contributions are welcome!
